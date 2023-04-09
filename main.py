@@ -1,7 +1,7 @@
 import pygame
 import os
+pygame.font.init()
 
-# create a window of game
 WIDTH, HEIGHT = 900, 600
 WIN = pygame.display.set_mode(((WIDTH, HEIGHT)))
 pygame.display.set_caption('My first pygame project!')
@@ -12,6 +12,8 @@ BULLETS_VEL = 6
 MAX_BULLETS = 4
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
+HEALTH_FONT = pygame.font.SysFont('comicsans', 44)
+WINNER_FONT = pygame.font.SysFont('comicsans', 144)
 
 BORDER = pygame.Rect(WIDTH//2-5, 0, 10, 500)
 
@@ -68,9 +70,15 @@ def control_bullet(yellow, red, yellow_bullets, red_bullets):
             yellow_bullets.remove(bullet)
 
 
-def draw_window(red, yellow, red_bullets, yellow_bullets):
+def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health):
     WIN.blit(space, (0, 0))
     pygame.draw.rect(WIN, (0, 0, 0), BORDER)
+    
+    red_health_text = HEALTH_FONT.render(f'Health: {red_health}', 1, (255, 255, 255))
+    WIN.blit(red_health_text, (10, 10))
+    yellow_health_text = HEALTH_FONT.render(f'Health: {yellow_health}', 1, (255, 255, 255))
+    WIN.blit(yellow_health_text,( WIDTH - yellow_health_text.get_width() - 10, 10))
+    
     WIN.blit(red_spaceship, (red.x, red.y))
     WIN.blit(yellow_spaceship, (yellow.x, yellow.y))
     
@@ -81,8 +89,12 @@ def draw_window(red, yellow, red_bullets, yellow_bullets):
     
     pygame.display.update()
 
-
-
+def draw_winner(winner_text):
+    text = WINNER_FONT.render(winner_text, 1, (255, 255, 255))
+    WIN.blit(text, (WIDTH//2 - text.get_width()//2, HEIGHT//2 - text.get_height()) )
+    pygame.display.update()
+    pygame.time.delay(4000)
+    
 def main():
     
     red = pygame.Rect(30, 265, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
@@ -90,6 +102,9 @@ def main():
     
     red_bullets = []
     yellow_bullets = []
+    
+    red_health = 10
+    yellow_health = 10
     
     run = True
     clock = pygame.time.Clock()
@@ -101,6 +116,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.quit()
+                
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL and len(red_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(red.x + red.height, red.y + red.width//2 - 4, 10, 8)
@@ -109,13 +126,29 @@ def main():
                     bullet = pygame.Rect(yellow.x - 10, yellow.y + yellow.width//2 - 4, 10, 8)
                     yellow_bullets.append(bullet)            
             
+            if event.type == RED_HIT:
+                red_health -= 1
+                
+            if event.type == YELLOW_HIT:
+                yellow_health -= 1
+            
+        winner_text = ''
+        if red_health == 0:
+            winner_text = 'Yellow Wins!'
+        if yellow_health == 0:
+            winner_text = 'Red Wins!'  
+        
+            
         keys_pressed = pygame.key.get_pressed()
         control_red_spaceship(keys_pressed, red)
         control_yellow_spaceship(keys_pressed, yellow)
         control_bullet(yellow, red, yellow_bullets, red_bullets)
-        draw_window(red, yellow, red_bullets, yellow_bullets)
-                
-    pygame.quit()
+        draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health)
+        
+        if winner_text != '':
+            draw_winner(winner_text)
+            break       
+    main()
     
 if __name__ == '__main__':
     main()
