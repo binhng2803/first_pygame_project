@@ -13,7 +13,7 @@ MAX_BULLETS = 4
 YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
 
-BORDER = pygame.Rect(WIDTH//2-5, 0, 10, HEIGHT)
+BORDER = pygame.Rect(WIDTH//2-5, 0, 10, 500)
 
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 70, 50
 red_spaceship_image = pygame.image.load(
@@ -25,6 +25,9 @@ yellow_spaceship_image = pygame.image.load(
     os.path.join('Assets', 'spaceship_yellow.png')) 
 yellow_spaceship = pygame.transform.rotate(pygame.transform.scale(
     yellow_spaceship_image,(SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 270)
+
+space = pygame.transform.scale(
+    pygame.image.load(os.path.join('Assets', 'space-earth.png')), (WIDTH, HEIGHT))
 
 
 def control_red_spaceship(keys_pressed, red):
@@ -66,7 +69,7 @@ def control_bullet(yellow, red, yellow_bullets, red_bullets):
 
 
 def draw_window(red, yellow, red_bullets, yellow_bullets):
-    WIN.fill(COLOR)
+    WIN.blit(space, (0, 0))
     pygame.draw.rect(WIN, (0, 0, 0), BORDER)
     WIN.blit(red_spaceship, (red.x, red.y))
     WIN.blit(yellow_spaceship, (yellow.x, yellow.y))
