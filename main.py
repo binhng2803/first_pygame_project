@@ -1,6 +1,7 @@
 import pygame
 import os
 pygame.font.init()
+pygame.mixer.init()
 
 WIDTH, HEIGHT = 900, 600
 WIN = pygame.display.set_mode(((WIDTH, HEIGHT)))
@@ -14,6 +15,8 @@ YELLOW_HIT = pygame.USEREVENT + 1
 RED_HIT = pygame.USEREVENT + 2
 HEALTH_FONT = pygame.font.SysFont('comicsans', 44)
 WINNER_FONT = pygame.font.SysFont('comicsans', 144)
+BULLETS_HIT_SOUND = pygame.mixer.Sound(os.path.join('Assets\Grenade+1.mp3'))
+BULLETS_FIRE_SOUND = pygame.mixer.Sound(os.path.join('Assets\Gun+Silencer.mp3'))
 
 BORDER = pygame.Rect(WIDTH//2-5, 0, 10, 500)
 
@@ -122,15 +125,19 @@ def main():
                 if event.key == pygame.K_LCTRL and len(red_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(red.x + red.height, red.y + red.width//2 - 4, 10, 8)
                     red_bullets.append(bullet)
+                    BULLETS_FIRE_SOUND.play()
                 if event.key == pygame.K_RCTRL and len(yellow_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(yellow.x - 10, yellow.y + yellow.width//2 - 4, 10, 8)
-                    yellow_bullets.append(bullet)            
+                    yellow_bullets.append(bullet)  
+                    BULLETS_FIRE_SOUND.play()          
             
             if event.type == RED_HIT:
                 red_health -= 1
+                BULLETS_HIT_SOUND.play()
                 
             if event.type == YELLOW_HIT:
                 yellow_health -= 1
+                BULLETS_HIT_SOUND.play()
             
         winner_text = ''
         if red_health == 0:
