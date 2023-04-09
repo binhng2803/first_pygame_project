@@ -7,6 +7,7 @@ WIN = pygame.display.set_mode(((WIDTH, HEIGHT)))
 pygame.display.set_caption('My first pygame project!')
 COLOR = '#8776FF'
 FPS = 60
+VEL = 4
 
 SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 70, 50
 red_spaceship_image = pygame.image.load(
@@ -19,6 +20,26 @@ yellow_spaceship_image = pygame.image.load(
 yellow_spaceship = pygame.transform.rotate(pygame.transform.scale(
     yellow_spaceship_image,(SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 270)
 
+
+def control_red_spaceship(keys_pressed, red):
+    if keys_pressed[pygame.K_a]: # LEFT
+        red.x -= VEL
+    if keys_pressed[pygame.K_d]: # RIGHT
+        red.x += VEL
+    if keys_pressed[pygame.K_w]: # UP
+        red.y -= VEL
+    if keys_pressed[pygame.K_s]: # DOWN
+        red.y += VEL
+        
+def control_yellow_spaceship(keys_pressed, yellow):
+    if keys_pressed[pygame.K_LEFT]: # LEFT
+        yellow.x -= VEL
+    if keys_pressed[pygame.K_RIGHT]: # RIGHT
+        yellow.x += VEL
+    if keys_pressed[pygame.K_UP]: # UP
+        yellow.y -= VEL
+    if keys_pressed[pygame.K_DOWN]: # DOWN
+        yellow.y += VEL
 
 def draw_window(red, yellow):
     WIN.fill(COLOR)
@@ -41,6 +62,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+        
+        keys_pressed = pygame.key.get_pressed()
+        control_red_spaceship(keys_pressed, red)
+        control_yellow_spaceship(keys_pressed, yellow)
         draw_window(red, yellow)
                 
     pygame.quit()
